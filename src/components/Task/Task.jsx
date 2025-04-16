@@ -8,7 +8,6 @@ export default function Task({ task, onDelete, onComplete, onEditTask }) {
   const [isEditing, setIsEditing] = useState(false);
   const [timer, setTimer] = useState(true);
   const [timerTime, setTimerTime] = useState(0);
-  const [savedTimerTime, setSavedTimerTime] = useState(0);
 
   setInterval(() => {
     setCreateTime(formatDistanceToNow(created, { includeSeconds: true }));
@@ -47,7 +46,6 @@ export default function Task({ task, onDelete, onComplete, onEditTask }) {
         setTimerTime((timerTime) => timerTime + 1);
       }, 1000);
     } else if (!timer && timerTime !== 0) {
-      setSavedTimerTime(timerTime);
       clearInterval(interval);
     }
     return () => clearInterval(interval);
@@ -74,13 +72,13 @@ export default function Task({ task, onDelete, onComplete, onEditTask }) {
   return (
     <li className={className}>
       <div className="view">
-        <input className="toggle" type="checkbox" onChange={onComplete} />
+        <input className="toggle" type="checkbox" onChange={onComplete} checked={completed} />
         <label>
           <span className="title">{newDescription}</span>
           <span className="description">
             <button className="icon icon-play" onClick={onTimerStart}></button>
             <button className="icon icon-pause" onClick={onTimerStop}></button>
-            {timer ? formatTime(timerTime) : formatTime(savedTimerTime)}
+            {formatTime(timerTime)}
           </span>
           <span className="description">created {createTime} ago</span>
         </label>
