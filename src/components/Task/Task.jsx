@@ -9,13 +9,23 @@ export default function Task({ task, onDelete, onComplete, onEditTask }) {
   const [timer, setTimer] = useState(true);
   const [timerTime, setTimerTime] = useState(0);
 
-  setInterval(() => {
-    setCreateTime(formatDistanceToNow(created, { includeSeconds: true }));
-  }, 30000);
+  useEffect(() => {
+    const savedTimerTime = localStorage.getItem(`timerTime_${id}`);
+    if (savedTimerTime) {
+      setTimerTime(parseInt(savedTimerTime, 10));
+    }
+  }, [id]);
+
+  useEffect(() => {
+    const intervalId = setInterval(() => {
+      setCreateTime(formatDistanceToNow(created, { includeSeconds: true }));
+    }, 30000);
+
+    return () => clearInterval(intervalId);
+  }, [created]);
 
   const editChange = (e) => {
     setNewDescription(e.target.value);
-    console.log(task);
   };
 
   const onEditClick = () => {
@@ -43,13 +53,17 @@ export default function Task({ task, onDelete, onComplete, onEditTask }) {
 
     if (timer) {
       interval = setInterval(() => {
-        setTimerTime((timerTime) => timerTime + 1);
+        setTimerTime((TimerTime) => {
+          const newTimerTime = TimerTime + 1;
+          localStorage.setItem(`timerTime_${id}`, newTimerTime);
+          return newTimerTime;
+        });
       }, 1000);
     } else if (!timer && timerTime !== 0) {
       clearInterval(interval);
     }
     return () => clearInterval(interval);
-  }, [timer, timerTime]);
+  }, [timer, id]);
 
   const formatTime = (timeInSeconds) => {
     const minutes = Math.floor(timeInSeconds / 60);
@@ -59,6 +73,11 @@ export default function Task({ task, onDelete, onComplete, onEditTask }) {
     const formattedSeconds = String(seconds).padStart(2, '0');
 
     return `${formattedMinutes}:${formattedSeconds}`;
+  };
+
+  const handleDelete = () => {
+    localStorage.removeItem(`timerTime_${id}`);
+    onDelete();
   };
 
   let className = '';
@@ -83,7 +102,7 @@ export default function Task({ task, onDelete, onComplete, onEditTask }) {
           <span className="description">created {createTime} ago</span>
         </label>
         <button className="icon icon-edit" onClick={onEditClick}></button>
-        <button className="icon icon-destroy" onClick={onDelete}></button>
+        <button className="icon icon-destroy" onClick={handleDelete}></button>
       </div>
       {isEditing && (
         <form onSubmit={onEditSubmit} autoFocus>
