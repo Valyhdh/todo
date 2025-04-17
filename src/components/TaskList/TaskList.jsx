@@ -11,7 +11,7 @@ class TaskList extends Component {
           <Task
             key={`task${task.id}`}
             task={task}
-            onEdit={() => onEdit(task.id)}
+            onEdit={() => onEdit()}
             onDelete={() => onDelete(task.id)}
             onComplete={() => onComplete(task.id)}
           />

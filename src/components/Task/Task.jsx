@@ -12,12 +12,14 @@ class Task extends Component {
       timer: true,
       timerTime: 0,
     };
+
     this.editChange = this.editChange.bind(this);
     this.onEditClick = this.onEditClick.bind(this);
     this.onEditSubmit = this.onEditSubmit.bind(this);
     this.onTimerStart = this.onTimerStart.bind(this);
     this.onTimerStop = this.onTimerStop.bind(this);
     this.handleDelete = this.handleDelete.bind(this);
+    this.onCompleted = this.onCompleted.bind(this);
   }
 
   componentDidMount() {
@@ -63,9 +65,14 @@ class Task extends Component {
     const { id } = this.props.task;
     const { newDescription } = this.state;
     if (newDescription.trim()) {
+      console.log(newDescription, id);
       this.props.onEdit(id, newDescription);
       this.setState({ isEditing: false });
     }
+  }
+
+  onCompleted() {
+    this.props.onComplete();
   }
 
   onTimerStart() {
@@ -93,7 +100,7 @@ class Task extends Component {
   }
 
   render() {
-    const { task, onDelete, onComplete } = this.props;
+    const { task } = this.props;
     const { completed } = task;
     const { createTime, newDescription, isEditing, timerTime } = this.state;
 
@@ -108,7 +115,7 @@ class Task extends Component {
     return (
       <li className={className}>
         <div className="view">
-          <input className="toggle" type="checkbox" onChange={onComplete} checked={completed} />
+          <input className="toggle" type="checkbox" onChange={this.onCompleted} checked={completed} />
           <label>
             <span className="title">{newDescription}</span>
             <span className="description">
@@ -119,7 +126,7 @@ class Task extends Component {
             <span className="description">created {createTime} ago</span>
           </label>
           <button className="icon icon-edit" onClick={this.onEditClick}></button>
-          <button className="icon icon-destroy" onClick={onDelete}></button>
+          <button className="icon icon-destroy" onClick={this.handleDelete}></button>
         </div>
         {isEditing && (
           <form onSubmit={this.onEditSubmit} autoFocus>
