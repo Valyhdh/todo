@@ -1,32 +1,47 @@
-import React, { useState } from 'react';
+import React, { Component } from 'react';
 
-export default function NewTaskForm({ onAddTask }) {
-  const [description, setDescription] = useState('');
+class NewTaskForm extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      description: '',
+    };
 
-  const handleChange = (event) => {
-    setDescription(event.target.value);
-  };
+    this.handleChange = this.handleChange.bind(this);
+    this.handleSubmit = this.handleSubmit.bind(this);
+  }
 
-  const handleSubmit = (event) => {
+  handleChange(event) {
+    this.setState({ description: event.target.value });
+  }
+
+  handleSubmit(event) {
     event.preventDefault();
+    const { description } = this.state;
     if (description.trim()) {
-      onAddTask(description);
-      setDescription('');
+      this.props.onAddTask(description);
+      this.setState({ description: '' });
     }
-  };
+  }
 
-  return (
-    <header className="header">
-      <h1>todos</h1>
-      <form onSubmit={handleSubmit}>
-        <input
-          className="new-todo"
-          placeholder="What needs to be done?"
-          autoFocus
-          value={description}
-          onChange={handleChange}
-        />
-      </form>
-    </header>
-  );
+  render() {
+    const { description } = this.state;
+
+    return (
+      <header className="header">
+        <h1>todos</h1>
+        <form onSubmit={this.handleSubmit}>
+          <input
+            className="new-todo"
+            placeholder="What needs to be done?"
+            autoFocus
+            value={description}
+            onChange={this.handleChange}
+          />
+        </form>
+      </header>
+    );
+  }
 }
+
+export default NewTaskForm;
