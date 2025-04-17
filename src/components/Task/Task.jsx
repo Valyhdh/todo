@@ -63,7 +63,7 @@ class Task extends Component {
     const { id } = this.props.task;
     const { newDescription } = this.state;
     if (newDescription.trim()) {
-      this.props.onEditTask(id, newDescription);
+      this.props.onEdit(id, newDescription);
       this.setState({ isEditing: false });
     }
   }
@@ -118,11 +118,11 @@ class Task extends Component {
             </span>
             <span className="description">created {createTime} ago</span>
           </label>
-          <button className="icon icon-edit" onClick={this.editClick}></button>
+          <button className="icon icon-edit" onClick={this.onEditClick}></button>
           <button className="icon icon-destroy" onClick={onDelete}></button>
         </div>
         {isEditing && (
-          <form onSubmit={this.editSubmit} autoFocus>
+          <form onSubmit={this.onEditSubmit} autoFocus>
             <input type="text" className="edit" value={newDescription} onChange={this.editChange} />
           </form>
         )}
