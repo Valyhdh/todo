@@ -6,20 +6,23 @@ class NewTaskForm extends Component {
     this.state = {
       description: '',
     };
+
+    this.handleChange = this.handleChange.bind(this);
+    this.handleSubmit = this.handleSubmit.bind(this);
   }
 
-  handleChange = (event) => {
+  handleChange(event) {
     this.setState({ description: event.target.value });
-  };
+  }
 
-  handleSubmit = (event) => {
+  handleSubmit(event) {
     event.preventDefault();
     const { description } = this.state;
     if (description.trim()) {
       this.props.onAddTask(description);
       this.setState({ description: '' });
     }
-  };
+  }
 
   render() {
     const { description } = this.state;
