@@ -61,7 +61,7 @@ export default function App() {
   return (
     <section className="todoapp">
       <NewTaskForm onAddTask={addTask} />
-      <TaskList tasks={filterTasks} onDelete={deleteTask} onComplete={сompleteTask} onEditTask={editTask} />
+      <TaskList tasks={filterTasks} onDelete={deleteTask} onComplete={сompleteTask} onEdit={editTask} />
       <Footer tasks={tasks} onClearComplete={clearComplete} filter={filter} onFilterChange={changeFilter} />
     </section>
   );
