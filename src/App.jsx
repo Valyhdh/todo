@@ -1,68 +1,103 @@
-import React, { useState } from 'react';
+import React, { Component } from 'react';
 
 import NewTaskForm from './components/NewTaskForm/NewTaskForm';
 import TaskList from './components/TaskList/TaskList';
 import Footer from './components/Footer/Footer';
 
-export default function App() {
-  const [tasks, setTasks] = useState([]);
-  const [filter, setFilter] = useState('all');
+class App extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      tasks: [],
+      filter: 'all',
+    };
 
-  const addTask = (description) => {
+    this.addTask = this.addTask.bind(this);
+    this.deleteTask = this.deleteTask.bind(this);
+    this.editTask = this.editTask.bind(this);
+    this.clearComplete = this.clearComplete.bind(this);
+    this.completeTask = this.completeTask.bind(this);
+    this.changeFilter = this.changeFilter.bind(this);
+  }
+
+  addTask(description) {
     const newTask = {
       id: Date.now(),
       description: description,
       completed: false,
       created: new Date(),
     };
-    setTasks([newTask, ...tasks]);
-  };
+    this.setState((prevState) => ({
+      tasks: [newTask, ...prevState.tasks],
+    }));
+  }
 
-  const deleteTask = (id) => {
-    setTasks(tasks.filter((task) => task.id !== id));
-  };
+  deleteTask(id) {
+    this.setState((prevState) => ({
+      tasks: prevState.tasks.filter((task) => task.id !== id),
+    }));
+  }
 
-  const editTask = (id, newDescription) => {
-    setTasks(
-      tasks.map((task) => {
+  editTask(id, newDescription) {
+    this.setState((prevState) => ({
+      tasks: prevState.tasks.map((task) => {
         if (task.id === id) {
+          console.log(task);
           return { ...task, description: newDescription };
         }
         return task;
-      })
-    );
-  };
+      }),
+    }));
+  }
 
-  const clearComplete = () => {
-    setTasks(tasks.filter((task) => !task.completed));
-  };
+  clearComplete() {
+    this.setState((prevState) => ({
+      tasks: prevState.tasks.filter((task) => !task.completed),
+    }));
+  }
 
-  const сompleteTask = (id) => {
-    setTasks(
-      tasks.map((task) => {
+  completeTask(id) {
+    this.setState((prevState) => ({
+      tasks: prevState.tasks.map((task) => {
         if (task.id === id) {
+          console.log(task);
           return { ...task, completed: !task.completed };
         }
         return task;
-      })
+      }),
+    }));
+  }
+
+  changeFilter(newFilter) {
+    this.setState({ filter: newFilter });
+  }
+
+  filterTasks() {
+    const { tasks, filter } = this.state;
+    return tasks.filter((task) => {
+      if (filter === 'active') return !task.completed;
+      if (filter === 'completed') return task.completed;
+      return true;
+    });
+  }
+
+  render() {
+    const { tasks, filter } = this.state;
+    const filteredTasks = this.filterTasks();
+
+    return (
+      <section className="todoapp">
+        <NewTaskForm onAddTask={this.addTask} />
+        <TaskList
+          tasks={filteredTasks}
+          onDelete={this.deleteTask}
+          onComplete={this.completeTask}
+          onEdit={this.editTask}
+        />
+        <Footer tasks={tasks} onClearComplete={this.clearComplete} filter={filter} onFilterChange={this.changeFilter} />
+      </section>
     );
-  };
-
-  const changeFilter = (newFilter) => {
-    setFilter(newFilter);
-  };
-
-  const filterTasks = tasks.filter((task) => {
-    if (filter === 'active') return !task.completed;
-    if (filter === 'completed') return task.completed;
-    return true;
-  });
-
-  return (
-    <section className="todoapp">
-      <NewTaskForm onAddTask={addTask} />
-      <TaskList tasks={filterTasks} onDelete={deleteTask} onComplete={сompleteTask} onEditTask={editTask} />
-      <Footer tasks={tasks} onClearComplete={clearComplete} filter={filter} onFilterChange={changeFilter} />
-    </section>
-  );
+  }
 }
+
+export default App;
